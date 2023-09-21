@@ -18,12 +18,44 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+function containsOnlyNumbers(str) {
+  return /^\d+$/.test(str);
+}
+
 
 // your first API endpoint... 
 app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+app.get("/api", function (req, res) {
+  let unixDate = 0;
+  let utcDate = "";
+  const timeInMillisecond = new Date().getTime();
+  unixDate = timeInMillisecond
+  utcDate = new Date().toUTCString()
+  res.json({unix: unixDate, utc: utcDate})
+})
+
+app.get("/api/:date", function (req, res) {
+  let inputan = req.params.date;
+  let unixDate = 0;
+  let utcDate = "";
+  if (inputan) {
+    if (containsOnlyNumbers(inputan)) {
+      inputan = Number(inputan)
+    }
+    const timeInMillisecond = new Date(inputan).getTime();
+    unixDate = timeInMillisecond
+    utcDate = new Date(inputan).toUTCString()
+    if (utcDate === "Invalid Date") {
+      res.json({error: "Invalid Date"})
+    }
+  } else {
+    utcDate = new Date().toUTCString()
+  }
+  res.json({unix: unixDate, utc: utcDate})
+})
 
 
 // listen for requests :)
